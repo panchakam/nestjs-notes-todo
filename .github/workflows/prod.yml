@@ -17,6 +17,23 @@ env:
   CONTAINER_NAME: notes-todo-task	  # set this to the name of the container in the
                                                # containerDefinitions section of your task definition
 jobs:
+  test:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: npm install
+    - run: npm run build --if-present
+    - run: npm test
+
   build_and_push:
     name: Bild API docker image
     runs-on: ubuntu-latest
