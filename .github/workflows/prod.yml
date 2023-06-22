@@ -17,22 +17,8 @@ env:
   CONTAINER_NAME: notes-todo-task	  # set this to the name of the container in the
                                                # containerDefinitions section of your task definition
 jobs:
-  test:
-
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [16.x]
-    steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm install
-    - run: npm run build --if-present
-    - run: npm test
+ 
+    
 
   build_and_push:
     name: Bild API docker image
@@ -42,7 +28,17 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Use Node.js 16.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.x
+        cache: 'npm'
+    - run: npm install
+    - run: npm run build --if-present
+    - run: npm test
+
     - name: Configure AWS credentials
+      if: success()
       uses: aws-actions/configure-aws-credentials@v1
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -50,10 +46,12 @@ jobs:
         aws-region: ${{ env.AWS_REGION }}
 
     - name: Login to Amazon ECR
+      if: success()
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
     - name: Build, tag, and push image to Amazon ECR
+      if: success()
       id: build-image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -67,6 +65,7 @@ jobs:
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
     # - name: Fill in the new image ID in the Amazon ECS task definition
+    #   if: success()
     #   id: task-def
     #   uses: aws-actions/amazon-ecs-render-task-definition@v1
     #   with:
@@ -75,6 +74,7 @@ jobs:
     #     image: ${{ steps.build-image.outputs.image }}
 
     # - name: Deploy Amazon ECS task definition
+    #   if: success()
     #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
     #   with:
     #     task-definition: ${{ steps.task-def.outputs.task-definition }}
