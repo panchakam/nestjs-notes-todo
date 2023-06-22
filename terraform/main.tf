@@ -230,6 +230,24 @@ resource "aws_lb_listener" "https_listener" {
   certificate_arn = aws_acm_certificate.notes_todo_certificate.arn
 }
 
+resource "aws_lb_listener" "http_listener" {
+  load_balancer_arn = aws_alb.notes_todo_load_balancer.arn
+  port              = 80
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "redirect"
+
+    redirect {
+        port = "443"
+        protocol = "HTTPS"
+        status_code = "HTTP_301"
+    }    
+    
+  }
+}
+
+
 # resource "aws_lb_listener" "listener" {
 #   load_balancer_arn = "${aws_alb.notes_todo_load_balancer.arn}" # Referencing our load balancer
 #   port              = "80"
@@ -274,7 +292,7 @@ resource "aws_route53_record" "notes_todo_record" {
 }
 
 resource "aws_acm_certificate" "notes_todo_certificate" {
-  domain_name       = var.domain_name
+  domain_name       = "${var.subdomain_name}.${var.domain_name}"
   validation_method = "DNS"
 
   lifecycle {
