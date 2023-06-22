@@ -8,21 +8,21 @@ env:
   AWS_REGION: ${{ secrets.AWS_REGION }}         
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  
-  ECR_REPOSITORY: MY_ECR_REPOSITORY
-  ECS_SERVICE: MY_ECS_SERVICE
-  ECS_CLUSTER: MY_ECS_CLUSTER
-  ECS_TASK_DEFINITION: MY_ECS_TASK_DEFINITION
+
+  ECR_REPOSITORY: notes-todo-repository
+  ECS_SERVICE: notes-todo-service
+  ECS_CLUSTER: notes-todo-cluster
+  ECS_TASK_DEFINITION: notes-todo-task
                                                # file, e.g. .aws/task-definition.json
-  CONTAINER_NAME: MY_CONTAINER_NAME           # set this to the name of the container in the
+  CONTAINER_NAME: notes-todo-task	  # set this to the name of the container in the
                                                # containerDefinitions section of your task definition
 
 permissions:
   contents: read
 
 jobs:
-  deploy:
-    name: Deploy
+  build_and_push:
+    name: Bild API docker image
     runs-on: ubuntu-latest
     environment: production
 
@@ -69,3 +69,4 @@ jobs:
         service: ${{ env.ECS_SERVICE }}
         cluster: ${{ env.ECS_CLUSTER }}
         wait-for-service-stability: true
+        force-new-deployment: true
