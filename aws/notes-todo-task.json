@@ -1,0 +1,34 @@
+{
+    "containerDefinitions": [
+        {
+            "name": "notes-todo-task",
+            "image": "REPOSITORY_URL/REPOSITORY_IMAGE:REPOSITORY_TAG",
+            "cpu": 512,
+            "memory": 1024,
+            "portMappings": [
+                {
+                    "containerPort": 3000,
+                    "hostPort": 3000,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/notes-todo",
+                    "awslogs-region": "eu-central-1",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            }
+        }
+    ],
+    "family": "notes-todo-task",
+    "executionRoleArn": "arn:aws:iam::701584987364:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "512",
+    "memory": "1024"
+}
