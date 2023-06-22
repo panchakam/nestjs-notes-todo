@@ -2,17 +2,15 @@ FROM --platform=linux/amd64 node:16.13.2-alpine
 
 ENV NODE_ENV prod
 
-USER node
-
 WORKDIR /usr/src/app
 
 EXPOSE 3000
 
-COPY --chown=node:node package*.json ./
+COPY package*.json ./
 
 RUN npm install
 
-COPY --chown=node:node . .
+COPY . .
 
 RUN npm run build
 
