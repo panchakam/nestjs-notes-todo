@@ -153,7 +153,7 @@ resource "aws_ecs_service" "notes_todo_service" {
   task_definition = "${aws_ecs_task_definition.notes_todo_task.arn}"
   launch_type     = "FARGATE"
   desired_count   = 1
-
+  force_new_deployment = true
   load_balancer {
     target_group_arn = "${aws_lb_target_group.notes_todo_target_group.arn}" # Referencing our target group
     container_name   = "${aws_ecs_task_definition.notes_todo_task.family}"
